@@ -2,6 +2,7 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
     <RootNamespace>BtcAddress</RootNamespace>
     <AssemblyName>BtcAddress</AssemblyName>
@@ -34,5 +35,8 @@
        single-file publish output. -->
   <ItemGroup>
     <None Include="note-*.png;Ubuntu-R.ttf" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="App.xaml" />
   </ItemGroup>
 </Project>
