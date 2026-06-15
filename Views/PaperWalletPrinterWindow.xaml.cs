@@ -151,29 +151,21 @@ namespace BtcAddress.Views
         private void Timer1_Tick(object sender, EventArgs e)
         {
             if (CurrentlyGenerating == false) return;
-            if (CurrentSequence >= TotalToGenerate)
+
+            KeyPair k = PaperWalletGenerator.CreateKey(CurrentPassphrase, CurrentSequence, chkMiniKeys.IsChecked == true);
+            Addresses.Add(new KeyCollectionItem(k));
+
+            lblGenCount.Text = Addresses.Count.ToString() + " addresses have been generated.";
+            CurrentSequence++;
+
+            // Stop once sequences 1..TotalToGenerate have all been generated.
+            if (CurrentSequence > TotalToGenerate)
             {
                 CurrentlyGenerating = false;
                 LockButtons(false);
                 timer1.Stop();
                 btnGenerateAddresses.Content = "Generate addresses";
             }
-
-            string myhash = CurrentPassphrase + ((int)CurrentSequence).ToString();
-
-            KeyPair k;
-            if (chkMiniKeys.IsChecked == true)
-            {
-                k = MiniKeyPair.CreateDeterministic(myhash);
-                Addresses.Add(new KeyCollectionItem(k));
-            }
-            else
-            {
-                byte[] mykey = Util.ComputeSha256(myhash);
-            }
-
-            lblGenCount.Text = Addresses.Count.ToString() + " addresses have been generated.";
-            CurrentSequence++;
         }
 
         private void BtnPrintWallet_Click(object sender, RoutedEventArgs e)
