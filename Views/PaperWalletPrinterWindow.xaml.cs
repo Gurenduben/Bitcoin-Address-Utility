@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Threading;
 using Casascius.Bitcoin;
 using Org.BouncyCastle.Security;
-using WinForms = System.Windows.Forms;
 using Drawing = System.Drawing.Printing;
 
 namespace BtcAddress.Views
@@ -84,14 +84,14 @@ namespace BtcAddress.Views
                 {
                     if (txtPassphrase.Text.Length < 30)
                     {
-                        WinForms.MessageBox.Show("Please provide some random characters.  Just hit different keys on the keyboard until the box is full. This adds security to your paper wallet.", "", WinForms.MessageBoxButtons.OK, WinForms.MessageBoxIcon.Exclamation);
+                        MessageBox.Show(this, "Please provide some random characters.  Just hit different keys on the keyboard until the box is full. This adds security to your paper wallet.", "", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                         return;
                     }
                 }
 
                 if (!int.TryParse(txtGenCount.Text, out int requestedCount) || requestedCount < 1)
                 {
-                    WinForms.MessageBox.Show("Enter the number of addresses to create.", "", WinForms.MessageBoxButtons.OK, WinForms.MessageBoxIcon.Exclamation);
+                    MessageBox.Show(this, "Enter the number of addresses to create.", "", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                     return;
                 }
 
@@ -100,13 +100,13 @@ namespace BtcAddress.Views
                     string msg = "You have generated " + Addresses.Count + " addresses, which will be discarded if you continue.  Continue?";
                     if (Addresses.Count == 1) msg = msg.Replace("addresses", "address");
 
-                    if (WinForms.MessageBox.Show(msg, "Continue with generation?", WinForms.MessageBoxButtons.YesNo, WinForms.MessageBoxIcon.Warning) != WinForms.DialogResult.Yes) return;
+                    if (MessageBox.Show(this, msg, "Continue with generation?", MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes) return;
                 }
 
                 if (rdoDeterministicWallet.IsChecked == true && txtPassphrase.Text == CurrentPassphrase)
                 {
                     string msg = "You have not changed the passphrase since the last time you generated addresses, so you will be generating the same addresses as last time.  Continue?";
-                    if (WinForms.MessageBox.Show(msg, "Continue with generation?", WinForms.MessageBoxButtons.YesNo, WinForms.MessageBoxIcon.Warning) != WinForms.DialogResult.Yes) return;
+                    if (MessageBox.Show(this, msg, "Continue with generation?", MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes) return;
                 }
                 else
                 {
@@ -128,7 +128,7 @@ namespace BtcAddress.Views
                 {
                     if (txtPassphrase.Text.Length < 30)
                     {
-                        if (WinForms.MessageBox.Show("Passphrases must be highly unique and very long to be secure against hackers, who try trillions of random passwords in hopes of finding coins to steal.  Use a Random Wallet if you are not 100% sure about what you're doing.  Continue?", "", WinForms.MessageBoxButtons.OKCancel, WinForms.MessageBoxIcon.Exclamation) == WinForms.DialogResult.Cancel) return;
+                        if (MessageBox.Show(this, "Passphrases must be highly unique and very long to be secure against hackers, who try trillions of random passwords in hopes of finding coins to steal.  Use a Random Wallet if you are not 100% sure about what you're doing.  Continue?", "", MessageBoxButton.OKCancel, MessageBoxImage.Exclamation) == MessageBoxResult.Cancel) return;
                     }
 
                     CurrentPassphrase = txtPassphrase.Text;
@@ -180,29 +180,27 @@ namespace BtcAddress.Views
         {
             if (Addresses.Count == 0)
             {
-                WinForms.MessageBox.Show("Please generate some addresses before trying to print.");
+                MessageBox.Show(this, "Please generate some addresses before trying to print.");
                 return;
             }
 
             if (CurrentSelectionPrinted)
             {
                 string msg = "You have already printed these addresses before.  Print again?";
-                if (WinForms.MessageBox.Show(msg, "Warning", WinForms.MessageBoxButtons.YesNo, WinForms.MessageBoxIcon.Warning) != WinForms.DialogResult.Yes) return;
+                if (MessageBox.Show(this, msg, "Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes) return;
             }
 
-            WinForms.PrintDialog pd = new WinForms.PrintDialog();
-            Drawing.PrinterSettings ps = new Drawing.PrinterSettings();
-            pd.PrinterSettings = ps;
-            WinForms.DialogResult dr = pd.ShowDialog();
+            PrintDialog pd = new PrintDialog();
+            bool? dr = pd.ShowDialog();
 
-            if (dr == WinForms.DialogResult.OK)
+            if (dr == true)
             {
                 QRPrint printer = new QRPrint();
                 if (this.rdoWalletPrivQR.IsChecked == true) printer.PrintMode = QRPrint.PrintModes.PrivQR;
                 if (this.rdoWalletPubPrivQR.IsChecked == true) printer.PrintMode = QRPrint.PrintModes.PubPrivQR;
                 printer.keys = new List<KeyCollectionItem>(Addresses.Count);
                 foreach (KeyCollectionItem a in Addresses) printer.keys.Add(a);
-                printer.PrinterSettings = pd.PrinterSettings;
+                printer.PrinterSettings = pd.PrintQueue != null ? new Drawing.PrinterSettings { PrinterName = pd.PrintQueue.Name } : new Drawing.PrinterSettings();
                 CurrentSelectionPrinted = true;
                 printer.Print();
             }

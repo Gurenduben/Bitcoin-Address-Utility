@@ -2,10 +2,11 @@ using System;
 using System.Security.Cryptography;
 using System.Text;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Threading;
 using Casascius.Bitcoin;
 using PC;
-using WinForms = System.Windows.Forms;
 using Drawing = System.Drawing;
 using DrawingPrint = System.Drawing.Printing;
 
@@ -91,7 +92,7 @@ namespace BtcAddress.Views
 
             for (int i = 1; i <= n; i++)
             {
-                WinForms.Application.DoEvents();
+                Dispatcher.CurrentDispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.Background);
 
                 string privatestring;
                 switch (GenerationFormula)
@@ -137,15 +138,13 @@ namespace BtcAddress.Views
 
         private void BtnPrint_Click(object sender, RoutedEventArgs e)
         {
-            WinForms.PrintDialog pd = new WinForms.PrintDialog();
-            DrawingPrint.PrinterSettings ps = new DrawingPrint.PrinterSettings();
-            pd.PrinterSettings = ps;
-            WinForms.DialogResult dr = pd.ShowDialog();
+            PrintDialog pd = new PrintDialog();
+            bool? dr = pd.ShowDialog();
 
-            if (dr == WinForms.DialogResult.OK)
+            if (dr == true)
             {
                 PCPrint printer = new PCPrint();
-                printer.PrinterSettings.PrinterName = pd.PrinterSettings.PrinterName;
+                printer.PrinterSettings.PrinterName = pd.PrintQueue?.Name ?? "";
                 printer.PrinterFont = new Drawing.Font("Verdana", 10);
                 printer.TextToPrint = txtWallet.Text;
                 printer.Print();

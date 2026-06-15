@@ -8,7 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using Casascius.Bitcoin;
-using WinForms = System.Windows.Forms;
+using Microsoft.Win32;
 
 namespace BtcAddress.Views
 {
@@ -114,17 +114,17 @@ namespace BtcAddress.Views
 
             if (itemsToPrint.Count == 0)
             {
-                WinForms.MessageBox.Show("No items with printable private keys are selected.",
+                MessageBox.Show(this, "No items with printable private keys are selected.",
                     "Can't print encrypted keys",
-                    WinForms.MessageBoxButtons.OK, WinForms.MessageBoxIcon.Warning);
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
                 return null;
             }
 
             if (unprintables != 0)
             {
-                WinForms.MessageBox.Show(unprintables + " of the selected items cannot be printed because the private key is not known.  These items will be skipped.",
+                MessageBox.Show(this, unprintables + " of the selected items cannot be printed because the private key is not known.  These items will be skipped.",
                     "Can't print some items",
-                    WinForms.MessageBoxButtons.OK, WinForms.MessageBoxIcon.Warning);
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
             }
 
             return itemsToPrint;
@@ -192,12 +192,12 @@ namespace BtcAddress.Views
 
         private void ClearAll_Click(object sender, RoutedEventArgs e)
         {
-            WinForms.DialogResult result = WinForms.MessageBox.Show(
+            MessageBoxResult result = MessageBox.Show(this,
                 "Do you want to clear (delete) these keys?  This cannot be undone.",
                 "Clear keys?",
-                WinForms.MessageBoxButtons.OKCancel, WinForms.MessageBoxIcon.Exclamation);
+                MessageBoxButton.OKCancel, MessageBoxImage.Exclamation);
 
-            if (result != WinForms.DialogResult.OK)
+            if (result != MessageBoxResult.OK)
             {
                 return;
             }
@@ -245,7 +245,7 @@ namespace BtcAddress.Views
                     foreach (object tmpObj in tmpList)
                     {
                         KeyCollection.AddItem(new KeyCollectionItem(tmpObj as AddressBase));
-                        WinForms.Application.DoEvents();
+                        System.Windows.Threading.Dispatcher.CurrentDispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.Background);
                     }
                 }
                 else
@@ -316,16 +316,14 @@ namespace BtcAddress.Views
                 return;
             }
 
-            WinForms.PrintDialog pd = new WinForms.PrintDialog();
-            System.Drawing.Printing.PrinterSettings ps = new System.Drawing.Printing.PrinterSettings();
-            pd.PrinterSettings = ps;
-            WinForms.DialogResult dr = pd.ShowDialog();
+            System.Windows.Controls.PrintDialog pd = new System.Windows.Controls.PrintDialog();
+            bool? dr = pd.ShowDialog();
 
-            if (dr == WinForms.DialogResult.OK)
+            if (dr == true)
             {
                 CoinInsert printer = dense ? new CoinInsertDense() : new CoinInsert();
                 printer.keys = itemsToPrint;
-                printer.PrinterSettings = pd.PrinterSettings;
+                printer.PrinterSettings = pd.PrintQueue != null ? new System.Drawing.Printing.PrinterSettings { PrinterName = pd.PrintQueue.Name } : new System.Drawing.Printing.PrinterSettings();
                 printer.DenseMode = true;
                 printer.Print();
 
@@ -350,16 +348,16 @@ namespace BtcAddress.Views
             List<KeyCollectionItem> selected = GetCheckedRows().Select(r => r.Item).ToList();
             if (selected.Count == 0)
             {
-                WinForms.MessageBox.Show("No items are selected", "Empty selection",
-                    WinForms.MessageBoxButtons.OK, WinForms.MessageBoxIcon.Warning);
+                MessageBox.Show(this, "No items are selected", "Empty selection",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
             try
             {
-                WinForms.SaveFileDialog saveFileDialog1 = new WinForms.SaveFileDialog();
+                SaveFileDialog saveFileDialog1 = new SaveFileDialog();
                 saveFileDialog1.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
-                if (WinForms.DialogResult.OK == saveFileDialog1.ShowDialog())
+                if (saveFileDialog1.ShowDialog() == true)
                 {
                     if (saveFileDialog1.FileName != "")
                     {
@@ -373,7 +371,7 @@ namespace BtcAddress.Views
             }
             catch (Exception ex)
             {
-                WinForms.MessageBox.Show(ex.Message, "Failed to save file", WinForms.MessageBoxButtons.OK, WinForms.MessageBoxIcon.Exclamation);
+                MessageBox.Show(this, ex.Message, "Failed to save file", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
         }
 
@@ -382,16 +380,16 @@ namespace BtcAddress.Views
             List<KeyCollectionItem> selected = GetCheckedRows().Select(r => r.Item).ToList();
             if (selected.Count == 0)
             {
-                WinForms.MessageBox.Show("No items are selected", "Empty selection",
-                    WinForms.MessageBoxButtons.OK, WinForms.MessageBoxIcon.Warning);
+                MessageBox.Show(this, "No items are selected", "Empty selection",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
             try
             {
-                WinForms.SaveFileDialog saveFileDialog1 = new WinForms.SaveFileDialog();
+                SaveFileDialog saveFileDialog1 = new SaveFileDialog();
                 saveFileDialog1.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
-                if (WinForms.DialogResult.OK == saveFileDialog1.ShowDialog())
+                if (saveFileDialog1.ShowDialog() == true)
                 {
                     if (saveFileDialog1.FileName != "")
                     {
@@ -405,18 +403,18 @@ namespace BtcAddress.Views
             }
             catch (Exception ex)
             {
-                WinForms.MessageBox.Show(ex.Message, "Failed to save file", WinForms.MessageBoxButtons.OK, WinForms.MessageBoxIcon.Exclamation);
+                MessageBox.Show(this, ex.Message, "Failed to save file", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
         }
 
         private void DeleteSelectedItems_Click(object sender, RoutedEventArgs e)
         {
-            WinForms.DialogResult result = WinForms.MessageBox.Show(
+            MessageBoxResult result = MessageBox.Show(this,
                 "Do you want to clear (delete) the selected keys?  This cannot be undone.",
                 "Clear keys?",
-                WinForms.MessageBoxButtons.OKCancel, WinForms.MessageBoxIcon.Exclamation);
+                MessageBoxButton.OKCancel, MessageBoxImage.Exclamation);
 
-            if (result != WinForms.DialogResult.OK)
+            if (result != MessageBoxResult.OK)
             {
                 return;
             }
@@ -424,9 +422,9 @@ namespace BtcAddress.Views
             List<KeyCollectionItem> itemsToDelete = GetCheckedRows().Select(r => r.Item).ToList();
             if (itemsToDelete.Count == 0)
             {
-                WinForms.MessageBox.Show("No items selected.",
+                MessageBox.Show(this, "No items selected.",
                     "Nothing to delete",
-                    WinForms.MessageBoxButtons.OK, WinForms.MessageBoxIcon.Warning);
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 

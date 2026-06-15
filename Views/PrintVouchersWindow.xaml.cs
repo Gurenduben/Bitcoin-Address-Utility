@@ -6,7 +6,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Casascius.Bitcoin;
-using WinForms = System.Windows.Forms;
 using Drawing = System.Drawing.Printing;
 
 namespace BtcAddress.Views
@@ -41,12 +40,10 @@ namespace BtcAddress.Views
 
         private void BtnPrint_Click(object sender, RoutedEventArgs e)
         {
-            WinForms.PrintDialog pd = new WinForms.PrintDialog();
-            Drawing.PrinterSettings ps = new Drawing.PrinterSettings();
-            pd.PrinterSettings = ps;
-            WinForms.DialogResult dr = pd.ShowDialog();
+            PrintDialog pd = new PrintDialog();
+            bool? dr = pd.ShowDialog();
 
-            if (dr == WinForms.DialogResult.OK)
+            if (dr == true)
             {
                 QRPrint printer = new QRPrint();
                 printer.PrintMode = QRPrint.PrintModes.PsyBanknote;
@@ -75,7 +72,7 @@ namespace BtcAddress.Views
                 printer.keys = new List<KeyCollectionItem>(Items.Count);
                 printer.PreferUnencryptedPrivateKeys = chkPrintUnencrypted.IsChecked == true;
                 foreach (KeyCollectionItem a in Items) printer.keys.Add(a);
-                printer.PrinterSettings = pd.PrinterSettings;
+                printer.PrinterSettings = pd.PrintQueue != null ? new Drawing.PrinterSettings { PrinterName = pd.PrintQueue.Name } : new Drawing.PrinterSettings();
                 try
                 {
                     printer.Print();
@@ -83,17 +80,17 @@ namespace BtcAddress.Views
                 }
                 catch (Win32Exception ex)
                 {
-                    WinForms.MessageBox.Show("Printing failed because the printer output is currently locked by another process. Close any app using the target output and try again.\r\n\r\n" + ex.Message,
+                    MessageBox.Show(this, "Printing failed because the printer output is currently locked by another process. Close any app using the target output and try again.\r\n\r\n" + ex.Message,
                         "Print error",
-                        WinForms.MessageBoxButtons.OK,
-                        WinForms.MessageBoxIcon.Error);
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
                 }
                 catch (Exception ex)
                 {
-                    WinForms.MessageBox.Show("Printing failed.\r\n\r\n" + ex.Message,
+                    MessageBox.Show(this, "Printing failed.\r\n\r\n" + ex.Message,
                         "Print error",
-                        WinForms.MessageBoxButtons.OK,
-                        WinForms.MessageBoxIcon.Error);
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
                 }
             }
         }

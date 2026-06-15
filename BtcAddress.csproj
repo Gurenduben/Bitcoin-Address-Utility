@@ -3,7 +3,6 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net10.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
-    <UseWindowsForms>true</UseWindowsForms>
     <RootNamespace>BtcAddress</RootNamespace>
     <AssemblyName>BtcAddress</AssemblyName>
     <Platforms>x64</Platforms>
