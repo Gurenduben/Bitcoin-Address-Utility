@@ -16,99 +16,105 @@
 // along with Bitcoin Address Utility.  If not, see http://www.gnu.org/licenses/.
 
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
+using System.Windows;
+using BtcAddress.Views;
 
 namespace BtcAddress
 {
     static class Program
     {
+        public static MainWindow AddressUtility = null;
 
-        public static Form1 AddressUtility = null;
+        public static Base58CalcWindow Base58Calc = null;
 
-        public static Base58Calc Base58Calc = null;
+        public static MofNcalcWindow MofNcalc = null;
 
-        public static MofNcalc MofNcalc = null;
+        public static PpecKeygenWindow IntermediateGen = null;
 
-        public static PpecKeygen IntermediateGen = null;
+        public static KeyCombinerWindow KeyCombiner = null;
 
-        public static KeyCombiner KeyCombiner = null;
+        public static DecryptKeyWindow DecryptKey = null;
 
-        public static BtcAddress.Forms.DecryptKey DecryptKey = null;
+        public static Bip38ConfValidatorWindow ConfValidator = null;
 
-        public static BtcAddress.Forms.Bip38ConfValidator ConfValidator = null;
+        public static EscrowToolsShellWindow EscrowTools = null;
 
-        public static BtcAddress.Forms.EscrowTools EscrowTools = null;
+        public static PaperWalletPrinterWindow PaperWalletPrinter = null;
 
         public static void ShowAddressUtility()
         {
-            AddressUtility = showForm<Form1>(AddressUtility);
+            AddressUtility = showWindow<MainWindow>(AddressUtility, () => AddressUtility = null);
+        }
+
+        public static void ShowAddressUtility(Casascius.Bitcoin.KeyCollectionItem item)
+        {
+            ShowAddressUtility();
+            if (AddressUtility == null || item == null)
+            {
+                return;
+            }
+
+            AddressUtility.Dispatcher.BeginInvoke(new System.Action(() =>
+            {
+                AddressUtility.DisplayKeyCollectionItem(item);
+                AddressUtility.Activate();
+            }));
         }
 
         public static void ShowBase58Calc()
         {
-            Base58Calc = showForm<Base58Calc>(Base58Calc);
+            Base58Calc = showWindow<Base58CalcWindow>(Base58Calc, () => Base58Calc = null);
         }
 
         public static void ShowMofNcalc()
         {
-            MofNcalc = showForm<MofNcalc>(MofNcalc);
+            MofNcalc = showWindow<MofNcalcWindow>(MofNcalc, () => MofNcalc = null);
         }
 
         public static void ShowIntermediateGen()
         {
-            IntermediateGen = showForm<PpecKeygen>(IntermediateGen);
+            IntermediateGen = showWindow<PpecKeygenWindow>(IntermediateGen, () => IntermediateGen = null);
         }
 
         public static void ShowKeyCombiner()
         {
-            KeyCombiner = showForm<KeyCombiner>(KeyCombiner);
+            KeyCombiner = showWindow<KeyCombinerWindow>(KeyCombiner, () => KeyCombiner = null);
         }
 
         public static void ShowConfValidator()
         {
-            ConfValidator = showForm<BtcAddress.Forms.Bip38ConfValidator>(ConfValidator);
+            ConfValidator = showWindow<Bip38ConfValidatorWindow>(ConfValidator, () => ConfValidator = null);
         }
 
         public static void ShowKeyDecrypter()
         {
-            DecryptKey = showForm<BtcAddress.Forms.DecryptKey>(DecryptKey);
+            DecryptKey = showWindow<DecryptKeyWindow>(DecryptKey, () => DecryptKey = null);
         }
 
         public static void ShowEscrowTools()
         {
-            EscrowTools = showForm<BtcAddress.Forms.EscrowTools>(EscrowTools);
-
+            EscrowTools = showWindow<EscrowToolsShellWindow>(EscrowTools, () => EscrowTools = null);
         }
 
-        private static T showForm<T>(T currentform) where T : Form, new()
+        public static void ShowPaperWalletPrinter()
         {
-            if (currentform == null || currentform.Visible == false)
+            PaperWalletPrinter = showWindow<PaperWalletPrinterWindow>(PaperWalletPrinter, () => PaperWalletPrinter = null);
+        }
+
+        private static T showWindow<T>(T currentWindow, System.Action onClosed) where T : Window, new()
+        {
+            if (currentWindow == null || !currentWindow.IsVisible)
             {
                 T rv = new T();
+                rv.Closed += (_, __) => onClosed?.Invoke();
                 rv.Show();
                 return rv;
             }
             else
             {
-                currentform.Focus();
-                return currentform;
+                currentWindow.Activate();
+                return currentWindow;
             }
-        }
-
-
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
-        [STAThread]
-        static void Main()
-        {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-
-            Application.Run(new BtcAddress.Forms.KeyCollectionView());
         }
     }
 }

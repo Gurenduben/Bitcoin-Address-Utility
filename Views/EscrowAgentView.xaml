@@ -1,0 +1,23 @@
+<UserControl x:Class="BtcAddress.Views.EscrowAgentView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid Margin="8">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Label Grid.Row="0" Content="Escrow invite for payer:" />
+            <TextBox x:Name="txtEscrowForPayer" Grid.Row="1" Margin="0,0,0,8" />
+
+            <Button x:Name="btnGenerateEscrowInvitation" Grid.Row="2" Content="Generate escrow invitation" Width="180" Click="BtnGenerateEscrowInvitation_Click" Margin="0,0,0,8" />
+
+            <Label Grid.Row="3" Content="Escrow code for payee:" />
+            <TextBox x:Name="txtEscrowForPayee" Grid.Row="4" />
+        </Grid>
+    </ScrollViewer>
+</UserControl>

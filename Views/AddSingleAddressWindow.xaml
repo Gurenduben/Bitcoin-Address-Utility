@@ -1,0 +1,39 @@
+<Window x:Class="BtcAddress.Views.AddSingleAddressWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Add Single Address"
+        Height="160"
+        Width="545"
+        MinHeight="160"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="CanResizeWithGrip">
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock x:Name="lblEnterWhat" Text="Enter an address or key (any format)" />
+
+        <TextBox x:Name="textBox1"
+                 Grid.Row="1"
+                 Margin="0,6,0,6"
+                 VerticalScrollBarVisibility="Auto"
+                 AcceptsReturn="False" />
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <Button x:Name="btnGoMulti" Content="Add multiple addresses" Width="144" Height="26" Click="BtnGoMulti_Click" />
+            <Button x:Name="btnOK" Grid.Column="1" Content="OK" Width="75" Height="26" Margin="8,0,0,0" IsDefault="True" Click="BtnOK_Click" />
+            <Button x:Name="btnCancel" Grid.Column="2" Content="Cancel" Width="75" Height="26" Margin="8,0,0,0" IsCancel="True" />
+        </Grid>
+    </Grid>
+</Window>
+
+

@@ -14,7 +14,7 @@ License: GPLv3.
 
 ## Build
 
-- .NET 10, WinForms, x64. No cross-platform support.
+- .NET 10, WPF, x64. No cross-platform support.
 - Dependencies restore automatically from NuGet
   (`BouncyCastle.Cryptography`, `QRCoder`) — no manual DLLs required.
 

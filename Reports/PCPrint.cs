@@ -64,12 +64,12 @@ namespace PC
         private string _text;
         #endregion
 
-        #region Static Local Variables
+        #region Local Variables
         /// <summary>
-        /// Static variable to hold the current character
+        /// Variable to hold the current character
         /// we're currently dealing with.
         /// </summary>
-        static int curChar;
+        int curChar;
         #endregion
 
         #region  Class Properties
@@ -161,6 +161,25 @@ namespace PC
             // Run base code
             base.OnPrintPage(e);
 
+            if (string.IsNullOrEmpty(_text))
+            {
+                e.HasMorePages = false;
+                curChar = 0;
+                return;
+            }
+
+            if (curChar < 0)
+            {
+                curChar = 0;
+            }
+
+            if (curChar >= _text.Length)
+            {
+                e.HasMorePages = false;
+                curChar = 0;
+                return;
+            }
+
             //Declare local variables needed
 
             int printHeight;
@@ -200,15 +219,23 @@ namespace PC
             //Use the StringFormat class for the text layout of our document
             StringFormat format = new StringFormat(StringFormatFlags.LineLimit);
 
-            //Fit as many characters as we can into the print area      
+            //Fit as many characters as we can into the print area
+            int start = RemoveZeros(ref curChar);
+            if (start >= _text.Length)
+            {
+                e.HasMorePages = false;
+                curChar = 0;
+                return;
+            }
 
-            e.Graphics.MeasureString(_text.Substring(RemoveZeros(ref curChar)), PrinterFont, new SizeF(printWidth, printHeight), format, out chars, out lines);
+            string textToPrint = _text.Substring(start);
+            e.Graphics.MeasureString(textToPrint, PrinterFont, new SizeF(printWidth, printHeight), format, out chars, out lines);
 
             //Print the page
-            e.Graphics.DrawString(_text.Substring(RemoveZeros(ref curChar)), PrinterFont, Brushes.Black, printArea, format);
+            e.Graphics.DrawString(textToPrint, PrinterFont, Brushes.Black, printArea, format);
 
             //Increase current char count
-            curChar += chars;
+            curChar = start + chars;
 
             //Detemine if there is more text to print, if
             //there is the tell the printer there is more coming
@@ -239,7 +266,12 @@ namespace PC
             //As 0 (ZERO) being sent to DrawString will create unexpected
             //problems when printing we need to search for the first
             //non-zero character in the string.
-            while (_text[value] == '\0')
+            if (value < 0)
+            {
+                value = 0;
+            }
+
+            while (value < _text.Length && _text[value] == '\0')
             {
                 value++;
             }

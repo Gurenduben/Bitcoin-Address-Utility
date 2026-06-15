@@ -1,0 +1,28 @@
+<Window x:Class="BtcAddress.Views.EscrowToolsShellWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:views="clr-namespace:BtcAddress.Views"
+        Title="Escrow Tools"
+        Height="452"
+        Width="755"
+        Loaded="Window_Loaded">
+    <Grid Margin="12">
+        <TabControl>
+            <TabItem Header="How it works">
+                <views:EscrowHowItWorksView x:Name="howItWorksView" />
+            </TabItem>
+            <TabItem Header="Be a Payee">
+                <views:EscrowPayeeView x:Name="payeeView" />
+            </TabItem>
+            <TabItem Header="Be a Payer">
+                <views:EscrowPayerView x:Name="payerView" />
+            </TabItem>
+            <TabItem Header="Be an Escrow Agent">
+                <views:EscrowAgentView x:Name="agentView" />
+            </TabItem>
+            <TabItem Header="Collect your funds">
+                <views:EscrowRedeemView x:Name="redeemView" />
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>

@@ -1,0 +1,83 @@
+<Window x:Class="BtcAddress.Views.KeyCollectionView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Bitcoin Key Collection"
+        Height="434"
+        Width="760"
+        MinWidth="700">
+    <DockPanel>
+        <Menu x:Name="menuMain" DockPanel.Dock="Top" MouseMove="MenuMain_MouseMove">
+            <MenuItem Header="Tools">
+                <MenuItem Header="Address Utility" Click="AddressUtility_Click" />
+                <MenuItem Header="Base58 Calculator" Click="Base58Calculator_Click" />
+                <MenuItem Header="Key Decrypter" Click="KeyDecrypter_Click" />
+                <MenuItem Header="M-of-N Calculator" Click="MofNCalculator_Click" />
+                <MenuItem Header="Two-Factor Bitcoin Tools">
+                    <MenuItem Header="Intermediate Code Generator" Click="IntermediateGenerator_Click" />
+                    <MenuItem Header="Confirmation Code Validator" Click="ConfirmationCodeValidator_Click" />
+                    <MenuItem Header="Key Combiner" Click="KeyCombiner_Click" />
+                    <MenuItem Header="Key Decrypter" Click="KeyDecrypter_Click" />
+                </MenuItem>
+                <MenuItem Header="Escrow Tools" Click="EscrowTools_Click" />
+            </MenuItem>
+            <MenuItem Header="_File">
+                <MenuItem Header="Clear All" Click="ClearAll_Click" />
+                <MenuItem Header="Save" Visibility="Collapsed" />
+                <MenuItem Header="E_xit" Click="Exit_Click" />
+            </MenuItem>
+            <MenuItem Header="_Address">
+                <MenuItem Header="_New address" Click="NewAddress_Click" />
+                <MenuItem Header="_Generate addresses" Click="GenerateAddresses_Click" />
+                <MenuItem Header="_Enter an address/key" Click="EnterAddress_Click" />
+            </MenuItem>
+            <MenuItem Header="_Selection">
+                <MenuItem Header="Select All" Click="SelectAll_Click" />
+                <MenuItem Header="Deselect All" Click="DeselectAll_Click" />
+                <Separator />
+                <MenuItem Header="Print Banknote Vouchers" Click="PrintBanknoteVouchers_Click" />
+                <MenuItem Header="Print Physical Bitcoin Inserts" Click="PrintPhysicalBitcoinInserts_Click" />
+                <MenuItem Header="Print Physical Bitcoin Inserts - Dense" Click="PrintPhysicalBitcoinInsertsDense_Click" />
+                <MenuItem Header="Print Paper Wallets" Click="PrintPaperWallets_Click" />
+                <Separator />
+                <MenuItem Header="Save Address List" Click="SaveAddressList_Click" />
+                <MenuItem Header="Save Address List with PrivKey" Click="SaveAddressListWithPrivKey_Click" />
+                <Separator />
+                <MenuItem Header="Delete Selected Items" Click="DeleteSelectedItems_Click" />
+            </MenuItem>
+        </Menu>
+
+        <StatusBar DockPanel.Dock="Bottom">
+            <StatusBarItem>
+                <TextBlock x:Name="statusText" Text="Click Address to generate some addresses." />
+            </StatusBarItem>
+        </StatusBar>
+
+        <ListView x:Name="listView1"
+                  MouseDoubleClick="ListView1_MouseDoubleClick">
+            <ListView.Resources>
+                <Style TargetType="GridViewColumnHeader">
+                    <EventSetter Event="Click" Handler="GridViewColumnHeader_Click" />
+                </Style>
+            </ListView.Resources>
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Width="28">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox IsChecked="{Binding IsChecked}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Address" Width="400" DisplayMemberBinding="{Binding AddressText}" />
+                    <GridViewColumn Header="Private Key" Width="100" DisplayMemberBinding="{Binding PrivateKeyKind}" />
+                    <GridViewColumn Header="Balance" Width="100" DisplayMemberBinding="{Binding BalanceText}" />
+                </GridView>
+            </ListView.View>
+            <ListView.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="_Details" Click="Details_Click" />
+                </ContextMenu>
+            </ListView.ContextMenu>
+        </ListView>
+    </DockPanel>
+</Window>

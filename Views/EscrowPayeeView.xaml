@@ -1,0 +1,35 @@
+<UserControl x:Class="BtcAddress.Views.EscrowPayeeView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid Margin="8">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Label Grid.Row="0" Content="Paste invitation code from escrow agent:" />
+            <TextBox x:Name="txtPayeeCode" Grid.Row="1" Margin="0,0,0,8" />
+
+            <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,0,0,8">
+                <Button x:Name="btnGenPayee" Content="Generate" Width="110" Click="BtnGenPayee_Click" />
+                <Button x:Name="btnCopyInvite" Content="Copy" Width="80" Margin="8,0,0,0" Click="BtnCopyInvite_Click" />
+                <Button x:Name="btnSaveInvite" Content="Save" Width="80" Margin="8,0,0,0" Click="BtnSaveInvite_Click" />
+            </StackPanel>
+
+            <Label Grid.Row="3" Content="Send this code back to payer:" />
+            <TextBox x:Name="txtPayeeGeneratedInvite" Grid.Row="4" Margin="0,0,0,8" />
+
+            <Label Grid.Row="5" Content="Payee address:" />
+            <TextBox x:Name="txtPayeeGeneratedAddress" Grid.Row="6" Margin="0,0,0,8" IsReadOnly="True" />
+
+            <Label Grid.Row="7" Content="Keep your generated code safe. You will need it later." Foreground="DarkRed" />
+        </Grid>
+    </ScrollViewer>
+</UserControl>
