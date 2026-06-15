@@ -10,7 +10,7 @@ Bitcoin Address Utility (Casascius) — a Windows desktop tool for generating an
 
 ## Build / run
 
-- WinForms app, **.NET 10** (`net10.0-windows`), `x64`. No cross-platform support.
+- WPF app, **.NET 10** (`net10.0-windows`), `x64`. No cross-platform support.
 - SDK-style project `BtcAddress.csproj` (solution `BtcAddress.sln`). Dependencies restore from NuGet — no manual DLLs.
 
 ```powershell
@@ -18,7 +18,7 @@ dotnet build BtcAddress.csproj -c Release
 ```
 
 - Single-file self-contained exe (runs on a clean Windows): `dotnet publish BtcAddress.csproj -r win-x64 -c Release -p:PublishSingleFile=true --self-contained true` → `bin\Release\net10.0-windows\win-x64\publish\BtcAddress.exe`.
-- Entry point: `Program.Main` launches `BtcAddress.Forms.KeyCollectionView` (NOT `Form1`).
+- Entry point: `Program.Main` → `App.xaml` → `StartupUri="Views/KeyCollectionView.xaml"` launches `BtcAddress.Views.KeyCollectionView` (WPF main window).
 - The automated checks are two xUnit test projects under `test/` (both excluded from the app's compile glob via `<Compile Remove="test\**" />`): `UnitTests` (model/util unit tests) and `GoldenVectors` (crypto known-answer harness, see below). Run all:
 
 ```powershell
@@ -48,7 +48,7 @@ Green = all vectors pass. Details: `test/golden-vectors.md`.
 ### Namespace layout (does not match folders)
 
 - `Casascius.Bitcoin` — all of `Model/` (the crypto + domain core).
-- `BtcAddress` and `BtcAddress.Forms` — `Forms/` (WinForms UI). Note: forms live in **both** namespaces; check `using` and `Program.cs` references.
+- `BtcAddress` and `BtcAddress.Views` — `Views/` (WPF windows/user controls). Note: window code-behind lives in the `BtcAddress.Views` namespace; check `using` and `Program.cs` references.
 - `PC` — `Reports/` printing components.
 
 ### Core: `Model/Bitcoin.cs`
@@ -95,7 +95,11 @@ Bip38Base
 
 ## Migration status
 
-The .NET Framework 4.0 → .NET 10 retarget is **done** (branch `feature/upgrade-to-dotnet-10`): SDK-style project, NuGet `BouncyCastle.Cryptography` + `QRCoder` replacing the old unmanaged DLLs, WinForms kept. `upgrade-to-dotnet-10-plan.md` is the original plan, retained for context. The original 4.0 binary can't be rebuilt on a modern toolchain, so there is no byte-for-byte golden binary — the release gate is instead **all golden vectors passing** (`test/golden-vectors.md`). Any crypto-path change must keep that green.
+The .NET Framework 4.0 → .NET 10 retarget is **done** (branch `feature/upgrade-to-dotnet-10`): SDK-style project, NuGet `BouncyCastle.Cryptography` + `QRCoder` replacing the old unmanaged DLLs. `upgrade-to-dotnet-10-plan.md` is the original plan, retained for context.
+
+The Windows Forms → WPF UI migration is **done** (branch `feature/migrate-to-wpf`): XAML-based UI with code-behind in `Views/`, WPF printing via `IDocumentPaginatorSource` and `DocumentPaginator`, same `net10.0-windows` target (Windows-only). Model layer untouched, golden vectors pass. `migrate-to-wpf-plan.md` describes the approach. Version bumped to 1.2.0.
+
+The original .NET 4.0 binary can't be rebuilt on a modern toolchain, so there is no byte-for-byte golden binary — the release gate is instead **all golden vectors passing** (`test/golden-vectors.md`). Any crypto-path change must keep that green.
 
 ## Releases
 

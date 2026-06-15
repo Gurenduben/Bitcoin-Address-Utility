@@ -1,0 +1,72 @@
+<Window x:Class="BtcAddress.Views.WalletgenWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Paper Wallet Generator"
+        Height="720"
+        Width="780"
+        WindowStartupLocation="CenterScreen"
+        Loaded="Window_Loaded">
+    <Grid Margin="8">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" TextWrapping="Wrap"
+                   Text="Paper Wallet Generator generates a deterministic Bitcoin wallet from a passphrase. Entering the same passphrase generates the same wallet." />
+        <TextBlock Grid.Row="1" Margin="0,6,0,0" TextWrapping="Wrap"
+                   Text="To use it, either accept the random default passphrase or enter a secure one of your choice. Then click Generate." />
+
+        <TextBlock Grid.Row="2" Margin="0,8,0,0" Text="Passphrase:" />
+        <Grid Grid.Row="3" Margin="0,4,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBox x:Name="txtPassphrase" Grid.Column="0" />
+            <ProgressBar x:Name="progressBar1" Grid.Column="0" Visibility="Collapsed" Height="20" />
+            <Button x:Name="btnGenerate" Grid.Column="1" Width="121" Height="28" Margin="8,0,0,0" Content="Generate" Click="BtnGenerate_Click" />
+        </Grid>
+
+        <Grid Grid.Row="4" Margin="0,8,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="Number of addresses" />
+            <TextBox x:Name="txtAddressCount" Grid.Column="1" Width="45" Margin="8,0,0,0" Text="10" />
+            <ComboBox x:Name="cboOutputType" Grid.Column="2" Width="121" Margin="12,0,0,0">
+                <ComboBoxItem Content="Normal" />
+                <ComboBoxItem Content="CSV" />
+                <ComboBoxItem Content="Import script" />
+            </ComboBox>
+        </Grid>
+
+        <TextBox x:Name="txtWallet" Grid.Row="5" Margin="0,8,0,0" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" />
+
+        <TextBlock x:Name="lblFormula" Grid.Row="6" Margin="0,8,0,0"
+                   Text="Generation formula: PrivKey = SHA256(passphrase + n) (double-click to toggle)"
+                   MouseDown="LblFormula_MouseDown" />
+
+        <Grid Grid.Row="7" Margin="0,6,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBox x:Name="txtHelpText" IsReadOnly="True" AcceptsReturn="True" TextWrapping="Wrap"
+                     Text="You can print this generated wallet and keep it offline. Anyone with the passphrase or printed private keys can spend your funds. Keep backups safe and private." />
+            <Button x:Name="btnPrint" Grid.Column="1" Width="62" Height="41" Margin="8,0,0,0" Content="Print" Click="BtnPrint_Click" />
+        </Grid>
+    </Grid>
+</Window>
+
+
+

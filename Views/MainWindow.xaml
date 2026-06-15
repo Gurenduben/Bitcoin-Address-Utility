@@ -1,0 +1,120 @@
+<Window x:Class="BtcAddress.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Bitcoin Address Utility by Casascius (Beta, No Warranty)"
+        Height="430"
+        Width="980"
+        MinWidth="900"
+        KeyDown="MainWindow_KeyDown"
+        MouseMove="MainWindow_MouseMove"
+        Loaded="MainWindow_Loaded">
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="Tools">
+                <MenuItem Header="Base58 Calculator" Click="base58CalcToolStripMenuItem_Click" />
+                <MenuItem Header="Key Combiner" Click="keyCombinerToolStripMenuItem_Click" />
+                <MenuItem Header="M-of-N Calculator" Click="mofNCalcToolStripMenuItem_Click" />
+                <MenuItem Header="Intermediate Generator" Click="pPECKeygenToolStripMenuItem_Click" />
+                <MenuItem Header="Paper Wallet Generator" Click="walletGeneratorToolStripMenuItem_Click" />
+                <MenuItem Header="Paper Wallet Printer" Click="paperWalletPrinterToolStripMenuItem_Click" />
+            </MenuItem>
+            <MenuItem Header="Edit">
+                <MenuItem Header="Copy minikey to clipboard as QR code image" Click="copyMinikeyQRMenuItem_Click" />
+                <MenuItem Header="Copy private key to clipboard as QR code image" Click="copyPrivateKeyQRMenuItem_Click" />
+                <MenuItem Header="Copy public hex to clipboard as QR code image" Click="copyPublicHexQRMenuItem_Click" />
+                <MenuItem Header="Copy address to clipboard as QR code image" Click="copyAddressQRMenuItem_Click" />
+            </MenuItem>
+            <MenuItem Header="Options">
+                <MenuItem x:Name="spaceBetweenHexBytesToolStripMenuItem" Header="Space between hex bytes" IsCheckable="True" IsChecked="False" Click="spaceBetweenHexBytesToolStripMenuItem_Click" />
+            </MenuItem>
+            <MenuItem Header="Public Key">
+                <MenuItem x:Name="compressToolStripMenuItem" Header="Generate compressed public keys" IsCheckable="True" IsChecked="False" Click="compressToolStripMenuItem_Click" />
+                <MenuItem Header="Compress public key" Click="compressPublicKeyToolStripMenuItem_Click" />
+                <MenuItem Header="Uncompress public key" Click="uncompressPublicKeyToolStripMenuItem_Click" />
+                <MenuItem Header="Highlight X-coordinate" Click="showFieldsToolStripMenuItem_Click" />
+            </MenuItem>
+        </Menu>
+
+        <Grid Margin="8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="96" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Grid.Column="0" TextWrapping="Wrap" Text="Minikey / key&#x0a;from SHA256 hash&#x0a;of a string" />
+            <TextBox x:Name="txtMinikey" Grid.Row="0" Grid.Column="1" Margin="0,4,0,0" TextChanged="TextBox_TextChanged" KeyDown="TextBox_KeyDown" />
+
+            <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Margin="0,2,0,0">
+                <TextBlock x:Name="lblNotSafe" Foreground="DarkRed" Visibility="Collapsed" Text="Warning - Not Safe" />
+                <TextBlock x:Name="lblWhyNot" Margin="8,0,0,0" Foreground="Blue" TextDecorations="Underline" Visibility="Collapsed" Text="Why not?" MouseLeftButtonUp="lblWhyNot_Click" Cursor="Hand" />
+            </StackPanel>
+
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="Encryption phrase&#x0a;for private key" />
+            <Grid Grid.Row="2" Grid.Column="1" Margin="0,4,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBox x:Name="txtPassphrase" Grid.Column="0" Width="336" HorizontalAlignment="Left" />
+                <Button x:Name="btnSha256ToPrivate" Grid.Column="1" Margin="8,0,0,0" Width="46" Height="30" Content="▼▼" Click="btnSha256ToPrivate_Click" />
+                <Button x:Name="btnShacode" Grid.Column="2" Margin="2,0,0,0" Width="114" Height="30" Content="Generate Minikey" Click="btnShacode_Click" />
+                <Button x:Name="btnGenerate" Grid.Column="3" Margin="2,0,0,0" Width="114" Height="30" Content="Generate Address" Click="btnGenerate_Click" />
+            </Grid>
+
+            <TextBlock Grid.Row="3" Grid.Column="0" Text="Private Key (WIF)" VerticalAlignment="Center" />
+            <TextBox x:Name="txtPrivWIF" Grid.Row="3" Grid.Column="1" Margin="0,6,0,0" TextChanged="TextBox_TextChanged" KeyDown="TextBox_KeyDown" />
+
+            <StackPanel Grid.Row="4" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,2,0,0">
+                <Button x:Name="btnPrivHexToWIF" Width="46" Height="30" Content="▲" Click="btnPrivHexToWIF_Click" />
+                <Button x:Name="btnPrivWIFToHex" Width="46" Height="30" Margin="2,0,0,0" Content="▼▼" Click="btnPrivWIFToHex_Click" />
+            </StackPanel>
+
+            <TextBlock Grid.Row="5" Grid.Column="0" Text="Private Key (Hex)" VerticalAlignment="Center" />
+            <TextBox x:Name="txtPrivHex" Grid.Row="5" Grid.Column="1" Margin="0,6,0,0" TextChanged="TextBox_TextChanged" />
+
+            <TextBlock Grid.Row="6" Grid.Column="0" Text="Public Key (Hex)" VerticalAlignment="Center" />
+            <TextBox x:Name="txtPubHex" Grid.Row="6" Grid.Column="1" Margin="0,6,0,0" Height="43" AcceptsReturn="True" TextChanged="TextBox_TextChanged" />
+
+            <TextBlock Grid.Row="7" Grid.Column="0" Text="Public Key (Hash)" VerticalAlignment="Center" />
+            <TextBox x:Name="txtPubHash" Grid.Row="7" Grid.Column="1" Margin="0,6,0,0" TextChanged="TextBox_TextChanged" />
+
+            <Grid Grid.Row="8" Grid.Column="1" Margin="0,6,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBox x:Name="txtBtcAddr" Grid.Column="0" TextChanged="TextBox_TextChanged" />
+                <ComboBox x:Name="cboCoinType" Grid.Column="1" Width="101" Margin="8,0,0,0" SelectionChanged="cboCoinType_SelectionChangeCommitted">
+                    <ComboBoxItem Content="Bitcoin" />
+                    <ComboBoxItem Content="Testnet" />
+                    <ComboBoxItem Content="Namecoin" />
+                    <ComboBoxItem Content="Litecoin" />
+                </ComboBox>
+                <Button x:Name="btnAddressToPubHash" Grid.Column="2" Width="46" Height="30" Margin="8,0,0,0" Content="▲" Click="btnAddressToPubHash_Click" />
+                <Button x:Name="btnPubHashToAddress" Grid.Column="3" Width="46" Height="30" Margin="2,0,0,0" Content="▼" Click="btnPubHashToAddress_Click" />
+                <Button x:Name="btnPrivToPub" Grid.Column="4" Width="46" Height="30" Margin="8,0,0,0" Content="▼▼" Click="btnPrivToPub_Click" />
+                <Button x:Name="btnPubHexToHash" Grid.Column="5" Width="46" Height="30" Margin="2,0,0,0" Content="▼▼" Click="btnPubHexToHash_Click" />
+            </Grid>
+        </Grid>
+    </DockPanel>
+</Window>
+
+
+

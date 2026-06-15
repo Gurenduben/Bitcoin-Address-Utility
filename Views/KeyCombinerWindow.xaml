@@ -1,0 +1,61 @@
+<Window x:Class="BtcAddress.Views.KeyCombinerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Key Combiner"
+        Height="540"
+        Width="700"
+        MinHeight="540"
+        MinWidth="700">
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" TextWrapping="Wrap" Margin="0,0,0,10"
+                   Text="Key Combiner combines two cryptographic keys into one, to allow two parties to share the effort of generating&#x0a;a restricted Bitcoin address.  Funds sent to it can only spent by someone who has access to both private keys.&#x0a;&#x0a;To do this, two parties each generate a keypair, and then share only the public key with one another.  Both can&#x0a;calculate the combined Bitcoin address by combining their private key with the public one received.  Send funds&#x0a;to that address.  The person who should be allowed to spend those funds needs to have both private keys.&#x0a;&#x0a;If you combine one public key with one private key, you can calculate the combined Bitcoin address, but not&#x0a;the combined private key.  Combining two private keys yields both the combined address and the private key&#x0a;needed to spend the funds sent to the combined address." />
+
+        <TextBlock Grid.Row="1" Grid.Column="0" Margin="0,0,8,4" VerticalAlignment="Top" Text="Input Key 1" />
+        <TextBox x:Name="txtInput1" Grid.Row="1" Grid.Column="1" Height="42" TextWrapping="Wrap" AcceptsReturn="True" Margin="0,0,0,6" />
+
+        <TextBlock Grid.Row="2" Grid.Column="0" Margin="0,0,8,4" VerticalAlignment="Top" Text="Input Key 2" />
+        <TextBox x:Name="txtInput2" Grid.Row="2" Grid.Column="1" Height="42" TextWrapping="Wrap" AcceptsReturn="True" Margin="0,0,0,6" />
+
+        <Button x:Name="btnCombine" Grid.Row="3" Grid.Column="0" Width="109" Height="41" Content="Combine" Click="BtnCombine_Click" Margin="0,0,8,8" />
+
+        <GroupBox Grid.Row="3" Grid.Column="1" Header="Combining Method" Margin="0,0,0,8">
+            <StackPanel Margin="8,6,8,6">
+                <RadioButton x:Name="rdoMul" GroupName="CombiningMethod" IsChecked="True" Content="EC Multiplication (two-factor physical Bitcoins) (most secure)" Margin="0,0,0,4" />
+                <StackPanel Orientation="Horizontal">
+                    <RadioButton x:Name="rdoAdd" GroupName="CombiningMethod" Content="EC Addition (for use only with Vanity Address Pool)" Margin="0,0,6,0" />
+                    <TextBlock VerticalAlignment="Center">
+                        <Hyperlink Click="WhyLink_Click">(why?)</Hyperlink>
+                    </TextBlock>
+                </StackPanel>
+            </StackPanel>
+        </GroupBox>
+
+        <TextBlock Grid.Row="4" Grid.Column="0" Margin="0,0,8,2" VerticalAlignment="Top" Text="Resulting&#x0a;Bitcoin Address" />
+        <TextBox x:Name="txtOutputAddress" Grid.Row="4" Grid.Column="1" Margin="0,0,0,6" />
+
+        <TextBlock Grid.Row="5" Grid.Column="0" Margin="0,0,8,2" VerticalAlignment="Top" Text="Resulting&#x0a;Public Key Hex" />
+        <TextBox x:Name="txtOutputPubkey" Grid.Row="5" Grid.Column="1" Height="42" TextWrapping="Wrap" AcceptsReturn="True" Margin="0,0,0,6" />
+
+        <TextBlock Grid.Row="6" Grid.Column="0" Margin="0,0,8,2" VerticalAlignment="Top" Text="Resulting&#x0a;Private Key" />
+        <TextBox x:Name="txtOutputPriv" Grid.Row="6" Grid.Column="1" Margin="0,0,0,0" />
+    </Grid>
+</Window>
+
+
+

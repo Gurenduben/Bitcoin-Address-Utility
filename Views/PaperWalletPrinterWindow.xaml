@@ -1,0 +1,56 @@
+<Window x:Class="BtcAddress.Views.PaperWalletPrinterWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Paper Wallet Printer"
+        Height="280"
+        Width="840">
+    <Grid Margin="12">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="468" />
+            <ColumnDefinition Width="313" />
+        </Grid.ColumnDefinitions>
+
+        <GroupBox Grid.Column="0" Header="Address Generation Options" Margin="0,0,6,0">
+            <Grid Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Number of addresses to generate" VerticalAlignment="Center" />
+                <TextBox x:Name="txtGenCount" Grid.Row="0" Grid.Column="1" Width="90" Text="8" Margin="8,0,0,0" />
+
+                <RadioButton x:Name="rdoRandomWallet" Grid.Row="1" Grid.ColumnSpan="2" Margin="0,8,0,0" IsChecked="True" Checked="RdoRandomWallet_Checked" Content="Randomly generated wallet" />
+                <RadioButton x:Name="rdoDeterministicWallet" Grid.Row="2" Grid.ColumnSpan="2" Margin="0,4,0,0" Checked="RdoDeterministicWallet_Checked" Content="Deterministic wallet" />
+
+                <CheckBox x:Name="chkMiniKeys" Grid.Row="1" Grid.Column="1" Margin="0,0,0,0" VerticalAlignment="Center" Content="Use MiniKey format" />
+
+                <TextBlock x:Name="lblInputDescription" Grid.Row="4" Grid.ColumnSpan="2" Margin="0,10,0,0" TextWrapping="Wrap" Text="Enter some random text with your keyboard to add entropy." />
+                <TextBox x:Name="txtPassphrase" Grid.Row="5" Grid.ColumnSpan="2" Margin="0,6,0,0" />
+
+                <TextBlock x:Name="lblGenCount" Grid.Row="7" Grid.Column="0" VerticalAlignment="Center" Text="0 addresses have been generated." />
+                <Button x:Name="btnGenerateAddresses" Grid.Row="7" Grid.Column="1" Width="173" Height="36" Margin="8,0,0,0" Content="Generate Addresses" Click="BtnGenerateAddresses_Click" />
+            </Grid>
+        </GroupBox>
+
+        <GroupBox Grid.Column="1" Header="Printing Style" Margin="6,0,0,0">
+            <StackPanel Margin="10">
+                <RadioButton x:Name="rdoWalletPubPrivQR" IsChecked="True" Content="8 wallets per page, Load/Spend QR codes" />
+                <RadioButton x:Name="rdoWalletPrivQR" Margin="0,6,0,0" Content="16 wallets per page, Spend QR code only" />
+
+                <Button x:Name="btnPrintWallet" Width="173" Height="36" Margin="0,16,0,0" Content="Print the wallet" Click="BtnPrintWallet_Click" />
+                <Button x:Name="btnSortKeys" Width="173" Height="36" Margin="0,12,0,0" Content="Sort the keys by Bitcoin address" />
+            </StackPanel>
+        </GroupBox>
+    </Grid>
+</Window>

@@ -1,0 +1,42 @@
+<Window x:Class="BtcAddress.Views.Base58CalcWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Base 58 Calculator"
+        Height="160"
+        Width="685"
+        MinHeight="160">
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="Mode">
+                <MenuItem x:Name="useChecksumMenuItem"
+                          Header="Use Checksum"
+                          IsCheckable="True"
+                          IsChecked="True"
+                          Click="UseChecksumMenuItem_Click" />
+            </MenuItem>
+        </Menu>
+
+        <Grid Margin="12,8,12,12">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Label Grid.Row="0" Grid.Column="0" Content="Hex" VerticalAlignment="Center" Margin="0,0,10,0" />
+            <TextBox Grid.Row="0" Grid.Column="1" x:Name="txtHex" TextChanged="TxtHex_TextChanged" />
+
+            <Label Grid.Row="1" Grid.Column="0" Content="Base58" VerticalAlignment="Center" Margin="0,8,10,0" />
+            <TextBox Grid.Row="1" Grid.Column="1" x:Name="txtBase58" Margin="0,8,0,0" TextChanged="TxtBase58_TextChanged" />
+
+            <TextBlock Grid.Row="2" Grid.Column="1" x:Name="lblByteCounts" Margin="0,8,0,0" Text="Bytes: 0  Base58 length: 0" />
+        </Grid>
+    </DockPanel>
+</Window>
+
+
+
