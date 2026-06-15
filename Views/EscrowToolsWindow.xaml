@@ -1,0 +1,75 @@
+<Window x:Class="BtcAddress.Views.EscrowToolsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Escrow Tools"
+        Height="452"
+        Width="755"
+        Loaded="Window_Loaded">
+    <Grid Margin="12">
+        <TabControl>
+            <TabItem Header="How it works">
+                <Grid Margin="8">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <TextBox x:Name="txtHowItWorks" IsReadOnly="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" />
+                    <TextBlock Grid.Row="1" HorizontalAlignment="Right" Margin="0,8,0,0">
+                        <Hyperlink Click="DisclaimerLink_Click">DISCLAIMER OF WARRANTY</Hyperlink>
+                    </TextBlock>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Be a Payee">
+                <StackPanel Margin="10">
+                    <TextBlock TextWrapping="Wrap" Text="Enter your Escrow Invitation code and generate a payment invitation for the payer." />
+                    <TextBox x:Name="txtPayeeCode" Margin="0,8,0,0" />
+                    <Button x:Name="btnGenPayee" Width="214" Margin="0,8,0,0" Content="Generate Payment Invitation" Click="BtnGenPayee_Click" />
+                    <TextBlock Margin="0,8,0,0" Text="Generated payment invitation:" />
+                    <TextBox x:Name="txtPayeeGeneratedInvite" />
+                    <TextBlock Margin="0,8,0,0" Text="Bitcoin address:" />
+                    <TextBox x:Name="txtPayeeGeneratedAddress" />
+                </StackPanel>
+            </TabItem>
+
+            <TabItem Header="Be a Payer">
+                <StackPanel Margin="10">
+                    <TextBlock TextWrapping="Wrap" Text="Enter the payment invitation and escrow invitation code to verify the address." />
+                    <TextBox x:Name="txtPayerCode1" Margin="0,8,0,0" />
+                    <TextBox x:Name="txtPayerCode2" Margin="0,6,0,0" />
+                    <Button x:Name="btnPayerDone" Width="84" Margin="0,8,0,0" Content="Done" Click="BtnPayerDone_Click" />
+                    <TextBlock x:Name="lblPayerHereIs" Margin="0,8,0,0" TextWrapping="Wrap" Text="Here is the Bitcoin address for this payment." Visibility="Collapsed" />
+                    <TextBox x:Name="txtPayerAddress" Margin="0,6,0,0" Visibility="Collapsed" />
+                    <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                        <Button x:Name="btnPayerSave" Width="84" Margin="0,0,8,0" Content="Save" Visibility="Collapsed" />
+                        <Button x:Name="btnPayerPrint" Width="84" Content="Print" Visibility="Collapsed" />
+                    </StackPanel>
+                </StackPanel>
+            </TabItem>
+
+            <TabItem Header="Be an Escrow Agent">
+                <StackPanel Margin="10">
+                    <TextBlock TextWrapping="Wrap" Text="Generate an escrow invitation pair and share one with each party." />
+                    <Button x:Name="btnGenerateEscrowInvitation" Width="214" Margin="0,8,0,0" Content="Generate Escrow Invitation" Click="BtnGenerateEscrowInvitation_Click" />
+                    <TextBlock x:Name="lblEscrowHead" Margin="0,8,0,0" TextWrapping="Wrap" Text="A new escrow invitation has been created." />
+                    <TextBox x:Name="txtEscrowForPayer" Margin="0,6,0,0" />
+                    <TextBox x:Name="txtEscrowForPayee" Margin="0,6,0,0" />
+                </StackPanel>
+            </TabItem>
+
+            <TabItem Header="Collect your funds">
+                <StackPanel Margin="10">
+                    <TextBlock Text="Enter the three codes:" />
+                    <TextBox x:Name="txtRedeemCode1" Margin="0,8,0,0" />
+                    <TextBox x:Name="txtRedeemCode2" Margin="0,6,0,0" />
+                    <TextBox x:Name="txtRedeemCode3" Margin="0,6,0,0" />
+                    <Button x:Name="btnRedeem" Width="75" Margin="0,8,0,0" Content="Redeem" Click="BtnRedeem_Click" />
+                    <TextBlock Margin="0,10,0,0" Text="The Bitcoin address is:" />
+                    <TextBox x:Name="txtRedeemAddress" />
+                    <TextBlock Margin="0,10,0,0" Text="The code (private key) needed to collect the funds is:" />
+                    <TextBox x:Name="txtRedeemPrivKey" />
+                </StackPanel>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>

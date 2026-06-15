@@ -3,7 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Bitcoin Key Collection"
         Height="434"
-        Width="629">
+        Width="760"
+        MinWidth="700">
     <DockPanel>
         <Menu x:Name="menuMain" DockPanel.Dock="Top" MouseMove="MenuMain_MouseMove">
             <MenuItem Header="Tools">
@@ -36,7 +37,7 @@
                 <MenuItem Header="Print Banknote Vouchers" Click="PrintBanknoteVouchers_Click" />
                 <MenuItem Header="Print Physical Bitcoin Inserts" Click="PrintPhysicalBitcoinInserts_Click" />
                 <MenuItem Header="Print Physical Bitcoin Inserts - Dense" Click="PrintPhysicalBitcoinInsertsDense_Click" />
-                <MenuItem Header="Print Paper Wallets" Visibility="Collapsed" Click="PrintPaperWallets_Click" />
+                <MenuItem Header="Print Paper Wallets" Click="PrintPaperWallets_Click" />
                 <Separator />
                 <MenuItem Header="Save Address List" Click="SaveAddressList_Click" />
                 <MenuItem Header="Save Address List with PrivKey" Click="SaveAddressListWithPrivKey_Click" />

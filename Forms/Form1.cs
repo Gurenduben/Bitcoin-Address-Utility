@@ -513,7 +513,7 @@ namespace BtcAddress
 
         private void walletGeneratorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Walletgen w = new Walletgen();
+            BtcAddress.Views.WalletgenWindow w = new BtcAddress.Views.WalletgenWindow();
             w.Show();
         }
 

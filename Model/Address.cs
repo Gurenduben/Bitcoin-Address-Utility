@@ -79,8 +79,17 @@ namespace Casascius.Bitcoin
         /// </summary>
         public AddressBase(string address)
         {
-            byte[] hex = Util.Base58CheckToByteArray(address);
-            if (hex.Length != 21) throw new ArgumentException("Not a valid or recognized address");
+            if (string.IsNullOrWhiteSpace(address))
+            {
+                throw new ArgumentException("Not a valid or recognized address");
+            }
+
+            byte[] hex = Util.Base58CheckToByteArray(address.Trim());
+            if (hex == null || hex.Length != 21)
+            {
+                throw new ArgumentException("Not a valid or recognized address");
+            }
+
             // Hash160 setter validates length and throws exception if needed
             Hash160 = hex;
         }

@@ -1,6 +1,6 @@
-# Windows Forms → WPF Migration (PENDING)
+# Windows Forms → WPF Migration (IN PROGRESS)
 
-Status: **pending** (plan created for future execution).
+Status: **in progress** (partially migrated; hybrid WPF/WinForms state).
 This file is the LLM-optimized implementation plan for migrating Bitcoin Address Utility
 from Windows Forms to WPF while maintaining Windows-only focus. For day-to-day guidance
 see `CLAUDE.md`; for crypto gate see `test/golden-vectors.md`.
@@ -11,6 +11,34 @@ layout mechanics, accessibility, and the printing layer. This plan covers projec
 mechanics and migration sequencing; for any question about *what the UI must do or look
 like*, defer to the UIDD. The XAML snippets in this plan are illustrative scaffolding only —
 where they conflict with the UIDD, the UIDD wins.
+
+## Current State Snapshot (feature/migrate-to-wpf)
+
+Observed in repository at sync time:
+
+- **Project file is hybrid**: `BtcAddress.csproj` contains both `<UseWPF>true</UseWPF>` and
+  `<UseWindowsForms>true</UseWindowsForms>`.
+- **WPF app bootstrapping exists**: `App.xaml` + `App.xaml.cs` are present and StartupUri points
+  to `Views/KeyCollectionView.xaml`.
+- **Program window manager migrated**: `Program.cs` uses WPF `Window` singletons and `showWindow<T>()`
+  with `IsVisible`/`Activate()` and close callbacks.
+- **Views directory created and populated**: WPF windows are present for major flows (`KeyCollectionView`,
+  `MainWindow`, `Base58CalcWindow`, `AddressGenWindow`, `MofNcalcWindow`, `PpecKeygenWindow`,
+  `KeyCombinerWindow`, `DecryptKeyWindow`, `Bip38ConfValidatorWindow`, escrow shell/views,
+  `PaperWalletPrinterWindow`, `PrintVouchersWindow`, etc.).
+- **Legacy WinForms directory still present**: `Forms/*.cs`, `*.Designer.cs`, and `*.resx` remain.
+- **Printing layer not yet migrated**: `Reports/QRPrint.cs` still derives from
+  `System.Drawing.Printing.PrintDocument` and uses `OnPrintPage`.
+- **WPF windows still use WinForms interop in places**: examples include `System.Windows.Forms.MessageBox`
+  and `System.Windows.Forms.PrintDialog` usage in WPF code-behind.
+- **Collection serialization model unchanged**: `Model/KeyCollection.cs` still uses
+  `List<KeyCollectionItem>` (no `ObservableCollection` conversion in model).
+- **Build currently succeeds**: `dotnet build` is green in current branch state.
+- **Release/docs/version not yet switched**: `README.md` still says WinForms, `CLAUDE.md` still
+  describes WinForms architecture/entrypoint, and `AssemblyInfo` is still `1.1.2`.
+
+Interpretation: migration is materially underway but not complete; this plan remains the execution
+guide to finish parity and release prep.
 
 ## Objective
 
@@ -30,12 +58,12 @@ cross-platform or mobile support — Windows desktop only.
 
 ## Release Gate
 
-**All golden vectors pass** (`test/GoldenVectors/GoldenVectorTests.cs`): 26 checks
+**All golden vectors pass** (`test/GoldenVectors/` harness): 26 checks
 including private key 0x01, BIP38 spec vectors, mini key, M-of-N, escrow round-trip,
 QR boundary lengths. Exit code 0 = success.
 
 ```powershell
-dotnet test test/GoldenVectors/GoldenVectorTests.csproj
+dotnet test test/GoldenVectors/GoldenVectors.csproj
 ```
 
 ## Architecture Changes
@@ -603,7 +631,7 @@ Not CI-enforced initially; defer strict XAML linting to Phase 2.
 
 ### Step 18: Run golden vectors
 ```powershell
-dotnet test test/GoldenVectors/GoldenVectorTests.csproj -c Release
+dotnet test test/GoldenVectors/GoldenVectors.csproj -c Release
 ```
 Must exit 0. If failures, Model layer inadvertently changed → rollback.
 
@@ -892,15 +920,15 @@ UI parity is verified against the UIDD feature-parity checklist (`docs/design/ui
 §5.1) and its "strict don'ts" (§5.2) in addition to the gates below.
 
 ### Required (gate)
-- [x] Golden vectors pass (26 checks, exit code 0)
-- [x] Unit tests pass (all)
-- [x] All 14+ forms functional (manual smoke test)
-- [x] Printing works (paper wallets, vouchers, coin inserts)
-- [x] File I/O unchanged (save/load address lists)
-- [x] Offline verification (zero network calls)
-- [x] Single-file publish works (runs on clean Windows VM)
-- [x] GnuPG signing workflow preserved
-- [x] CI passes (build, test, format, lint)
+- [ ] Golden vectors pass (26 checks, exit code 0)
+- [ ] Unit tests pass (all)
+- [ ] All 14+ forms functional (manual smoke test)
+- [ ] Printing works (paper wallets, vouchers, coin inserts)
+- [ ] File I/O unchanged (save/load address lists)
+- [ ] Offline verification (zero network calls)
+- [ ] Single-file publish works (runs on clean Windows VM)
+- [ ] GnuPG signing workflow preserved
+- [ ] CI passes (build, test, format, lint)
 
 ### Nice-to-have (Phase 2)
 - [ ] MVVM ViewModels

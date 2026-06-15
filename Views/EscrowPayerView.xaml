@@ -1,0 +1,39 @@
+<UserControl x:Class="BtcAddress.Views.EscrowPayerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid Margin="8">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Label Grid.Row="0" Content="Paste your code from escrow agent:" />
+            <TextBox x:Name="txtPayerCode1" Grid.Row="1" Margin="0,0,0,6" />
+
+            <Label Grid.Row="2" Content="Paste payee reply code:" />
+            <TextBox x:Name="txtPayerCode2" Grid.Row="3" Margin="0,0,0,8" />
+
+            <Button x:Name="btnPayerDone" Grid.Row="4" Content="Done" Width="110" Click="BtnPayerDone_Click" Margin="0,0,0,8" />
+
+            <Label x:Name="lblPayerHereIs" Grid.Row="5" Content="Here is payee's address:" Visibility="Collapsed" />
+            <TextBox x:Name="txtPayerAddress" Grid.Row="6" Margin="0,0,0,8" IsReadOnly="True" Visibility="Collapsed" />
+
+            <StackPanel Grid.Row="7" Orientation="Horizontal" Visibility="Collapsed" x:Name="pnlPayerActions">
+                <Button x:Name="btnPayerSave" Content="Save" Width="80" Click="BtnPayerSave_Click" />
+                <Button x:Name="btnPayerPrint" Content="Print" Width="80" Margin="8,0,0,0" Click="BtnPayerPrint_Click" />
+            </StackPanel>
+
+            <TextBlock Grid.Row="8" Margin="0,8,0,0" Foreground="DarkRed" TextWrapping="Wrap">
+                Verify payee identity before sending funds.
+            </TextBlock>
+        </Grid>
+    </ScrollViewer>
+</UserControl>

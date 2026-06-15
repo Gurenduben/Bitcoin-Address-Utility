@@ -219,7 +219,8 @@ namespace BtcAddress.Views
 
         private void GenerateAddresses_Click(object sender, RoutedEventArgs e)
         {
-            var genform = new BtcAddress.Forms.AddressGen();
+            var genform = new AddressGenWindow();
+            genform.Owner = this;
             genform.ShowDialog();
             if (genform.GeneratedItems != null && genform.GeneratedItems.Count > 0)
             {
@@ -229,7 +230,8 @@ namespace BtcAddress.Views
 
         private void EnterAddress_Click(object sender, RoutedEventArgs e)
         {
-            var asa = new BtcAddress.Forms.AddSingleAddress();
+            var asa = new AddSingleAddressWindow();
+            asa.Owner = this;
             asa.ShowDialog();
             if (asa.Result != null)
             {
@@ -279,7 +281,8 @@ namespace BtcAddress.Views
                 return;
             }
 
-            var printform = new BtcAddress.Forms.PrintVouchers();
+            var printform = new PrintVouchersWindow();
+            printform.Owner = this;
             printform.Items = itemsToPrint;
             printform.ShowDialog();
             if (printform.PrintAttempted)
@@ -339,6 +342,7 @@ namespace BtcAddress.Views
 
         private void PrintPaperWallets_Click(object sender, RoutedEventArgs e)
         {
+            Program.ShowPaperWalletPrinter();
         }
 
         private void SaveAddressList_Click(object sender, RoutedEventArgs e)
