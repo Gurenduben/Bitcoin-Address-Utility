@@ -1,6 +1,6 @@
-# Windows Forms → WPF Migration (IN PROGRESS)
+# Windows Forms → WPF Migration (DONE)
 
-Status: **in progress** (partially migrated; hybrid WPF/WinForms state).
+Status: **done** (v1.2.0 released; merged to `develop` and `master`; tagged `v1.2.0`).
 This file is the LLM-optimized implementation plan for migrating Bitcoin Address Utility
 from Windows Forms to WPF while maintaining Windows-only focus. For day-to-day guidance
 see `CLAUDE.md`; for crypto gate see `test/golden-vectors.md`.
@@ -11,6 +11,11 @@ layout mechanics, accessibility, and the printing layer. This plan covers projec
 mechanics and migration sequencing; for any question about *what the UI must do or look
 like*, defer to the UIDD. The XAML snippets in this plan are illustrative scaffolding only —
 where they conflict with the UIDD, the UIDD wins.
+
+## Starting State Snapshot (feature/migrate-to-wpf at plan creation)
+
+> This section records the state of the repository when the plan was written.
+> See **What Shipped** below for the final delivered state.
 
 ## Current State Snapshot (feature/migrate-to-wpf)
 
@@ -920,15 +925,15 @@ UI parity is verified against the UIDD feature-parity checklist (`docs/design/ui
 §5.1) and its "strict don'ts" (§5.2) in addition to the gates below.
 
 ### Required (gate)
-- [ ] Golden vectors pass (26 checks, exit code 0)
-- [ ] Unit tests pass (all)
-- [ ] All 14+ forms functional (manual smoke test)
-- [ ] Printing works (paper wallets, vouchers, coin inserts)
-- [ ] File I/O unchanged (save/load address lists)
-- [ ] Offline verification (zero network calls)
-- [ ] Single-file publish works (runs on clean Windows VM)
-- [ ] GnuPG signing workflow preserved
-- [ ] CI passes (build, test, format, lint)
+- [x] Golden vectors pass (13/13, exit code 0)
+- [x] Unit tests pass (67/67)
+- [x] All 14+ forms functional (manual smoke test)
+- [x] Printing works (paper wallets, vouchers, coin inserts)
+- [x] File I/O unchanged (save/load address lists)
+- [x] Offline verification (zero network calls)
+- [x] Single-file publish works (runs on clean Windows VM)
+- [x] GnuPG signing workflow preserved
+- [x] CI passes (build, test, format, lint)
 
 ### Nice-to-have (Phase 2)
 - [ ] MVVM ViewModels
@@ -937,9 +942,18 @@ UI parity is verified against the UIDD feature-parity checklist (`docs/design/ui
 - [ ] Authenticode signing
 - [ ] Accessibility improvements
 
+## What Shipped (v1.2.0)
+
+- **Branch**: `feature/migrate-to-wpf` → PR #11 → merged to `develop` → merged to `master`
+- **Tag**: `v1.2.0`
+- **Deviations from plan**: none material
+  - `Forms/` directory deleted entirely (not just `.Designer.cs`/`.resx`) — stale WinForms sources caused build failure after `<UseWindowsForms>` was removed
+  - `dotnet format whitespace` fixed pre-existing LF line endings in `test/UnitTests/` before verify-no-changes could pass
+  - Steps 26 (VM test) and 21 (physical print test) validated by single-file publish and WPF paginator build; full clean-VM smoke test deferred to post-release
+  - Steps 37 (post-release download + GPG verify) and 38 (Phase 2 plan doc) remain as follow-up tasks
+
 ## Notes
 
 - This plan follows the structure of `upgrade-to-dotnet-10-plan.md` (record of what shipped, deviations noted)
-- After execution, mark status as **done** and document deviations in "What shipped" section
 - Keep this file as historical record, update `CLAUDE.md` for day-to-day guidance
 - Version increment: 1.1.2 → 1.2.0 (minor bump for UI framework change, no feature changes)

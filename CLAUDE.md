@@ -25,7 +25,7 @@ dotnet build BtcAddress.csproj -c Release
 dotnet test BtcAddress.sln
 ```
 
-- **CI:** GitHub Actions workflow `.github/workflows/ci.yml` runs on `windows-latest` (WinForms is Windows-only). Triggers: push to `master`/`develop`/`release/**` and all pull requests. Jobs: `build` + `test` on every trigger; `format` (`dotnet format whitespace --verify-no-changes`) and `lint` (`dotnet format style` + `analyzers --verify-no-changes`) on pull requests only. Format/lint rules come from `.editorconfig`; all jobs fail on problems. Run the gate locally before a PR:
+- **CI:** GitHub Actions workflow `.github/workflows/ci.yml` runs on `windows-latest` (WPF is Windows-only).
 
 ```powershell
 dotnet format whitespace BtcAddress.sln --verify-no-changes
@@ -85,7 +85,7 @@ Bip38Base
 - secp256k1 EC math, SHA256, RIPEMD160, `SecureRandom` → BouncyCastle NuGet (`BouncyCastle.Cryptography` v2, namespace `Org.BouncyCastle.*`). RNG used in keygen is BouncyCastle's `SecureRandom`, not .NET's. Migrated from BC v1; `ECPoint.GetEncoded(bool)` compression args were re-derived (BC v1 `Multiply()` returned uncompressed points) — golden vectors guard this.
 - scrypt for BIP38 → BouncyCastle `Org.BouncyCastle.Crypto.Generators.SCrypt.Generate` (resolved via the `SCrypt` namespace import; golden vectors guard byte-for-byte output). Replaced the formerly bundled `CryptSharp/` (scrypt/PBKDF2/Salsa20, `unsafe`).
 - QR codes → `QRCoder` NuGet, wrapped in `Barcode/QR.cs`; Code128 barcodes → `Barcode/Barcode128b.cs`.
-- Printing (paper wallets, vouchers, coin inserts) → `Reports/` + `System.Drawing.Printing`; logic currently lives partly in form code-behind (e.g. `Forms/PaperWalletPrinter.cs`).
+- Printing (paper wallets, vouchers, coin inserts) → `Reports/` + WPF `DocumentPaginator` (`IDocumentPaginatorSource`); print logic lives in `Reports/QRPrint.cs` and is called from `Views/` code-behind.
 
 ## Conventions
 
