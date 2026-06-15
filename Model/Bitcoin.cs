@@ -252,15 +252,16 @@ namespace Casascius.Bitcoin
             List<byte> bytes = new List<byte>();
             StringBuilder run = new StringBuilder();
 
-            // A delimiter (or end of input) terminates a run of hex chars. Each run is
-            // decoded in pairs left-to-right; a trailing lone nibble becomes a byte with
-            // a zero high nibble (e.g. "A" -> 0x0A), matching the original parser.
+            // A delimiter (or end of input) terminates a run of hex chars. Each run is a
+            // big-endian byte string: an odd digit count gets a leading zero nibble
+            // (e.g. "ABC" -> 0x0ABC -> {0x0A, 0xBC}), so the value matches GetHexBytes's
+            // big-endian front-padding and the BigInteger consumers of these bytes.
             void FlushRun()
             {
                 if (run.Length == 0) return;
-                int even = run.Length & ~1;
-                if (even > 0) bytes.AddRange(Convert.FromHexString(run.ToString(0, even)));
-                if (run.Length > even) bytes.Add(Convert.FromHexString("0" + run[even])[0]);
+                string s = run.ToString();
+                if ((s.Length & 1) == 1) s = "0" + s;
+                bytes.AddRange(Convert.FromHexString(s));
                 run.Clear();
             }
 

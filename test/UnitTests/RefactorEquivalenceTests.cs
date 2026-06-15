@@ -23,12 +23,14 @@ using Xunit;
 
 namespace BtcAddress.UnitTests
 {
-    // Proves the Convert-based refactors of ByteArrayToString / HexStringToBytes produce
-    // byte-for-byte identical output to the original hand-rolled implementations, which are
-    // embedded below as the reference oracle and fuzzed against the live Util methods.
+    // ByteArrayToString is still proven byte-for-byte identical to the original (it is
+    // display-only and unchanged in semantics). HexStringToBytes was deliberately tightened:
+    // each delimiter-separated run is now a BIG-ENDIAN byte string, so an odd digit count
+    // gets a leading zero nibble ("ABC" -> {0x0A, 0xBC}) instead of the legacy trailing
+    // low-byte ("ABC" -> {0xAB, 0x0C}). The reference oracle below encodes the NEW semantics.
     public class RefactorEquivalenceTests
     {
-        // ---- original implementations (pre-refactor), kept verbatim as the oracle ----
+        // ---- ByteArrayToString original implementation, kept verbatim as the oracle ----
 
         private static string OldByteArrayToString(byte[] ba, int offset, int count)
         {
@@ -41,50 +43,49 @@ namespace BtcAddress.UnitTests
             return rv;
         }
 
-        private static byte[] OldHexStringToBytes(string source, bool testingForValidHex = false)
+        // ---- corrected big-endian reference oracle for HexStringToBytes (NEW semantics) ----
+
+        private static byte[] RefHexStringToBytes(string source, bool testingForValidHex = false)
         {
             List<byte> bytes = new List<byte>();
-            bool gotFirstChar = false;
-            byte accum = 0;
+            StringBuilder run = new StringBuilder();
 
-            foreach (char c in source.ToCharArray())
+            void Flush()
+            {
+                if (run.Length == 0) return;
+                string s = run.ToString();
+                if ((s.Length & 1) == 1) s = "0" + s; // big-endian: pad high nibble
+                for (int i = 0; i < s.Length; i += 2)
+                {
+                    bytes.Add((byte)((HexVal(s[i]) << 4) | HexVal(s[i + 1])));
+                }
+                run.Clear();
+            }
+
+            foreach (char c in source)
             {
                 if (c == ' ' || c == '-' || c == ':')
                 {
-                    if (gotFirstChar)
-                    {
-                        bytes.Add(accum);
-                        accum = 0;
-                        gotFirstChar = false;
-                    }
+                    Flush();
                 }
                 else if ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f'))
                 {
-                    byte v = (byte)(c - 0x30);
-                    if (c >= 'A' && c <= 'F') v = (byte)(c + 0x0a - 'A');
-                    if (c >= 'a' && c <= 'f') v = (byte)(c + 0x0a - 'a');
-
-                    if (gotFirstChar == false)
-                    {
-                        gotFirstChar = true;
-                        accum = v;
-                    }
-                    else
-                    {
-                        accum <<= 4;
-                        accum += v;
-                        bytes.Add(accum);
-                        accum = 0;
-                        gotFirstChar = false;
-                    }
+                    run.Append(c);
                 }
-                else
+                else if (testingForValidHex)
                 {
-                    if (testingForValidHex) return null;
+                    return null;
                 }
             }
-            if (gotFirstChar) bytes.Add(accum);
+            Flush();
             return bytes.ToArray();
+        }
+
+        private static int HexVal(char c)
+        {
+            if (c >= '0' && c <= '9') return c - '0';
+            if (c >= 'a' && c <= 'f') return c - 'a' + 10;
+            return c - 'A' + 10;
         }
 
         // ---- ByteArrayToString ----
@@ -121,15 +122,60 @@ namespace BtcAddress.UnitTests
         // ---- HexStringToBytes ----
 
         [Theory]
-        [InlineData("ABC", new byte[] { 0xAB, 0x0C })]          // trailing lone nibble -> low byte
-        [InlineData("1-A2", new byte[] { 0x01, 0xA2 })]         // delimiter forces a byte boundary mid-pair
-        [InlineData("1 2 3", new byte[] { 0x01, 0x02, 0x03 })]  // single nibbles between spaces
+        // odd-length run is big-endian: a leading zero nibble is prepended to the run
+        [InlineData("ABC", new byte[] { 0x0A, 0xBC })]          // 0x0ABC, not legacy {0xAB,0x0C}
+        [InlineData("1", new byte[] { 0x01 })]                  // single nibble -> 0x01
+        [InlineData("ABCDE", new byte[] { 0x0A, 0xBC, 0xDE })]  // 0x0ABCDE
+        [InlineData("123", new byte[] { 0x01, 0x23 })]          // 0x0123
+        // delimiters still force a byte boundary; each run is its own big-endian value
+        [InlineData("1-A2", new byte[] { 0x01, 0xA2 })]         // runs "1","A2" -> {0x01},{0xA2}
+        [InlineData("1 2 3", new byte[] { 0x01, 0x02, 0x03 })]  // single-nibble runs preserved
+        [InlineData("AB-C", new byte[] { 0xAB, 0x0C })]         // runs "AB","C" -> {0xAB},{0x0C}
+        [InlineData("ABC-DE", new byte[] { 0x0A, 0xBC, 0xDE })] // odd run "ABC" -> {0x0A,0xBC}, "DE"
         [InlineData("", new byte[] { })]
         [InlineData("   ", new byte[] { })]
         [InlineData("de:ad:be:ef", new byte[] { 0xDE, 0xAD, 0xBE, 0xEF })]
         public void HexStringToBytes_KnownCases(string src, byte[] expected)
         {
             Assert.Equal(expected, Util.HexStringToBytes(src));
+        }
+
+        [Fact]
+        public void HexStringToBytes_OddLengthRun_IsBigEndian()
+        {
+            // The whole odd-length string read as one big-endian integer.
+            byte[] actual = Util.HexStringToBytes("ABCDE");
+            Assert.Equal(0x0ABCDE, (actual[0] << 16) | (actual[1] << 8) | actual[2]);
+        }
+
+        [Fact]
+        public void HexStringToBytes_DelimiterStrippingIsBoundaryPreserving()
+        {
+            // Same digits, different delimiters -> same bytes when each run is even.
+            byte[] a = Util.HexStringToBytes("AB CD");
+            byte[] b = Util.HexStringToBytes("AB-CD");
+            byte[] c = Util.HexStringToBytes("AB:CD");
+            byte[] d = Util.HexStringToBytes("ABCD");
+            Assert.Equal(new byte[] { 0xAB, 0xCD }, a);
+            Assert.Equal(a, b);
+            Assert.Equal(a, c);
+            Assert.Equal(a, d);
+        }
+
+        // ---- GetHexBytes: short-input front-padding and leading-zero clip (big-endian) ----
+
+        [Theory]
+        // a few bytes short -> front-padded (value right-aligned, big-endian)
+        [InlineData("0102", 4, new byte[] { 0x00, 0x00, 0x01, 0x02 })]
+        // odd + short -> big-endian run THEN front-pad: "ABC"->{0x0A,0xBC}-> right-aligned
+        [InlineData("ABC", 4, new byte[] { 0x00, 0x00, 0x0A, 0xBC })]
+        // exact length passes through untouched
+        [InlineData("01020304", 4, new byte[] { 0x01, 0x02, 0x03, 0x04 })]
+        // one overhanging leading zero byte is clipped from the front
+        [InlineData("00010203", 3, new byte[] { 0x01, 0x02, 0x03 })]
+        public void GetHexBytes_ShortAndOdd_BigEndian(string src, int minimum, byte[] expected)
+        {
+            Assert.Equal(expected, Util.GetHexBytes(src, minimum));
         }
 
         [Fact]
@@ -146,7 +192,7 @@ namespace BtcAddress.UnitTests
         }
 
         [Fact]
-        public void HexStringToBytes_Fuzz_MatchesOracle()
+        public void HexStringToBytes_Fuzz_MatchesBigEndianOracle()
         {
             // Alphabet biased toward hex digits, delimiters, and a few invalid chars.
             char[] alphabet = "0123456789abcdefABCDEF -:gGzZ.\t\n".ToCharArray();
@@ -161,7 +207,7 @@ namespace BtcAddress.UnitTests
 
                 foreach (bool testing in new[] { false, true })
                 {
-                    byte[] expected = OldHexStringToBytes(src, testing);
+                    byte[] expected = RefHexStringToBytes(src, testing);
                     byte[] actual = Util.HexStringToBytes(src, testing);
                     Assert.Equal(expected, actual); // Assert.Equal handles null == null
                 }
